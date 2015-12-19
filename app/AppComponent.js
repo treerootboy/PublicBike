@@ -24,9 +24,9 @@ module.exports = React.createClass({
 		}).bind(this));
 		map.enableScrollWheelZoom(true);
 		map.setCurrentCity('深圳');
+		map.centerAndZoom('罗湖', 15);
 
 		global.addEventListener('resize', this.resetMapSize);
-
 		this.setState({map: map});
 	},
 	componentDidUpdate: function(prevProps, prevState) {
