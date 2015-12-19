@@ -44,7 +44,9 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {global.$ = __webpack_require__(1);
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	global.$ = __webpack_require__(1);
 	global.Api = __webpack_require__(2);
 	global.Stations = __webpack_require__(3);
 
@@ -9274,6 +9276,8 @@
 /* 2 */
 /***/ function(module, exports) {
 
+	'use strict';
+
 	var Api;
 	var station = {};
 	station['5005000000'] = '产业园站';
@@ -9378,11 +9382,11 @@
 	Api = {
 									_url: '',
 									station: station,
-									url: function (station_code) {
+									url: function url(station_code) {
 																	this._url = 'http://lhcs.shencom.cn/scamp/index.php/bicycle/tool/ajax_return_station_info/' + station_code;
 																	return this;
 									},
-									fetch: function (success) {
+									fetch: function fetch(_success) {
 																	$.ajax({
 																									url: 'https://jsonp.afeld.me/',
 																									type: 'GET',
@@ -9390,8 +9394,8 @@
 																									jsonp: 'callback',
 																									data: { "url": this._url },
 																									timeout: 5000,
-																									success: function (data) {
-																																	success && success instanceof Function && success(data);
+																									success: function success(data) {
+																																	_success && _success instanceof Function && _success(data);
 																									}
 																	});
 																	return this;
@@ -9402,6 +9406,8 @@
 /***/ },
 /* 3 */
 /***/ function(module, exports) {
+
+	"use strict";
 
 	module.exports = [{
 	  "station": {
@@ -29976,13 +29982,15 @@
 /* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var React = __webpack_require__(150);
+	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
+
+	var React = __webpack_require__(150);
 	var StationSelector = __webpack_require__(163);
 	module.exports = React.createClass({
 		displayName: 'exports',
 
 		isLoadMarkers: false,
-		getInitialState: function () {
+		getInitialState: function getInitialState() {
 			return {
 				map: {},
 				station: {
@@ -29991,11 +29999,11 @@
 				}
 			};
 		},
-		resetMapSize: function () {
+		resetMapSize: function resetMapSize() {
 			this.refs.map.style.width = $(global).width() + 'px';
 			this.refs.map.style.height = $(global).height() + 'px';
 		},
-		componentDidMount: function () {
+		componentDidMount: function componentDidMount() {
 			var map = new BMap.Map('map');
 			map.addEventListener("tilesloaded", (function () {
 				// Mark down all stations
@@ -30008,7 +30016,7 @@
 
 			this.setState({ map: map });
 		},
-		componentDidUpdate: function (prevProps, prevState) {
+		componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 			new BMap.Geolocation().getCurrentPosition((function (geo) {
 				this.state.map.centerAndZoom(geo.point, 15);
 				this.state.map.addOverlay(new BMap.Circle(geo.point, 20));
@@ -30021,24 +30029,26 @@
 				this.state.map.centerAndZoom(new BMap.Point(this.state.station.lng, this.state.station.lat), 18);
 			}
 		},
-		setMarkers: function () {
+		setMarkers: function setMarkers() {
+			var _this = this;
+
 			if (!this.isLoadMarkers && this.state.map) {
 				this.state.map.clearOverlays();
 				var points = [];
-				Stations.map((v, i) => {
+				Stations.map(function (v, i) {
 					var point = new BMap.Point(v.station.lng, v.station.lat);
 					var marker = new BMap.Marker(point);
 					var label = new BMap.Label(v.station.name, { offset: new BMap.Size(20, -10) });
 					marker.setLabel(label);
 					marker.addEventListener("click", (function () {
 						this.setStation(v);
-					}).bind(this));
-					this.state.map.addOverlay(marker);
+					}).bind(_this));
+					_this.state.map.addOverlay(marker);
 				});
 				this.isLoadMarkers = true;
 			}
 		},
-		setStation(v) {
+		setStation: function setStation(v) {
 			Api.url(v.station.fddmz).fetch((function (data) {
 				var station = data.station;
 				if (this.isMounted()) {
@@ -30046,7 +30056,7 @@
 				}
 			}).bind(this));
 		},
-		render() {
+		render: function render() {
 			return React.createElement(
 				'div',
 				null,
@@ -30069,6 +30079,8 @@
 /* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
 	var React = __webpack_require__(150);
 	var Style = __webpack_require__(164);
 
@@ -30076,30 +30088,33 @@
 		displayName: 'exports',
 
 		listItemOvering: false,
-		getInitialState: function () {
+		getInitialState: function getInitialState() {
 			return {
 				input: '',
 				isFocus: false
 			};
 		},
-		isOvering(isOvering) {
-			this.listItemOvering = isOvering;
+		isOvering: function isOvering(_isOvering) {
+			this.listItemOvering = _isOvering;
 		},
-		isFocus(isFocus) {
-			this.setState({ isFocus: this.listItemOvering || isFocus });
+		isFocus: function isFocus(_isFocus) {
+			this.setState({ isFocus: this.listItemOvering || _isFocus });
 		},
-		changeHandler(e) {
+		changeHandler: function changeHandler(e) {
 			this.setState({ input: e.target.value });
 		},
-		selectedHandler(data) {
+		selectedHandler: function selectedHandler(data) {
 			this.setState({ input: data.station.name });
 			this.props.onSelect(data);
 		},
-		componentDidUpdate: function (prevProps, prevState) {
+
+		componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 			$(this.refs.list).width($(this.refs.input).outerWidth() - 2);
 			this.state.isFocus && this.refs.list.children.length > 1 ? $(this.refs.list).show() : $(this.refs.list).hide();
 		},
-		render() {
+		render: function render() {
+			var _this = this;
+
 			return React.createElement(
 				'div',
 				{ className: Style.container },
@@ -30107,10 +30122,10 @@
 				React.createElement(
 					'ul',
 					{ ref: 'list', className: Style.list },
-					Stations.map((v, i) => {
-						if (v.station.name.search(this.state.input) !== -1) return React.createElement(
+					Stations.map(function (v, i) {
+						if (v.station.name.search(_this.state.input) !== -1) return React.createElement(
 							'li',
-							{ key: 'item_' + i, className: Style.item, onMouseOver: this.isOvering.bind(null, true), onMouseOut: this.isOvering.bind(null, false), onClick: this.selectedHandler.bind(null, v) },
+							{ key: 'item_' + i, className: Style.item, onMouseOver: _this.isOvering.bind(null, true), onMouseOut: _this.isOvering.bind(null, false), onClick: _this.selectedHandler.bind(null, v) },
 							v.station.name
 						);
 					})
