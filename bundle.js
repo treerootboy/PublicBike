@@ -30008,6 +30008,7 @@
 			map.addEventListener("tilesloaded", (function () {
 				// Mark down all stations
 				this.setMarkers();
+				this.setMyGeo();
 			}).bind(this));
 			map.enableScrollWheelZoom(true);
 			map.setCurrentCity('深圳');
@@ -30017,17 +30018,18 @@
 			this.setState({ map: map });
 		},
 		componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
-			new BMap.Geolocation().getCurrentPosition((function (geo) {
-				this.state.map.centerAndZoom(geo.point, 15);
-				this.state.map.addOverlay(new BMap.Circle(geo.point, 20));
-			}).bind(this));
-
 			this.resetMapSize();
 
 			// move map to the selected station
 			if (this.state.station !== prevState.station) {
 				this.state.map.centerAndZoom(new BMap.Point(this.state.station.lng, this.state.station.lat), 18);
 			}
+		},
+		setMyGeo: function setMyGeo() {
+			new BMap.Geolocation().getCurrentPosition((function (geo) {
+				this.state.map.centerAndZoom(geo.point, 15);
+				this.state.map.addOverlay(new BMap.Circle(geo.point, 20));
+			}).bind(this));
 		},
 		setMarkers: function setMarkers() {
 			var _this = this;
@@ -30041,7 +30043,7 @@
 					var label = new BMap.Label(v.station.name, { offset: new BMap.Size(20, -10) });
 					marker.setLabel(label);
 					marker.addEventListener("click", (function () {
-						this.setStation(v);
+						label.setContent(v.station.name + '(借:' + (v.station.canborrow || 0) + ',空:' + (v.station.empty || 0) + ')');
 					}).bind(_this));
 					_this.state.map.addOverlay(marker);
 				});
