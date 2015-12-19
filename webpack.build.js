@@ -16,7 +16,8 @@ var config = {
 	},
     plugins: [
         new HtmlWebpackPlugin({
-          template: './app/index.html'
+            inject: true,
+            template: './app/index.html'
         })
     ]
 }
