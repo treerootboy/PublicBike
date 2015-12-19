@@ -18,15 +18,18 @@ module.exports = React.createClass({
 			this.setMarkers();
 		}).bind(this));
 		map.enableScrollWheelZoom(true);
-		map.centerAndZoom('罗湖', 15);
-
+		map.setCurrentCity('深圳');
 		this.setState({map: map});
 	},
 	componentDidUpdate: function(prevProps, prevState) {
+		(new BMap.Geolocation()).getCurrentPosition((function(geo){
+			this.state.map.centerAndZoom(geo.point, 15);
+			this.state.map.addOverlay(new BMap.Circle(geo.point, 20));
+		}).bind(this));
+
 		// move map to the selected station
 		if (this.state.station !== prevState.station) {
-			var point = new BMap.Point(this.state.station.lng, this.state.station.lat);
-			this.state.map.centerAndZoom(point, 18);
+			this.state.map.centerAndZoom(new BMap.Point(this.state.station.lng, this.state.station.lat), 18);
 		}
 	},
 	setMarkers: function() {
@@ -39,26 +42,27 @@ module.exports = React.createClass({
 				var label = new BMap.Label(v.station.name,{offset:new BMap.Size(20,-10)});
 				marker.setLabel(label);
 				marker.addEventListener("click", (function(){
-					Api.url(v.station.fddmz).fetch((function(data){
-						if (data.station && this.isMounted()) this.setState({station:data.station});
-					}).bind(this));
+					this.setStation(v);
 				}).bind(this));
 				this.state.map.addOverlay(marker);
 			});
 			this.isLoadMarkers = true;
 		}
 	},
-	selectorHandler(v){
+	setStation(v){
 		Api.url(v.station.fddmz).fetch((function(data){
-			if (data.station && this.isMounted()) this.setState({station:data.station});
+			var station = data.station;
+			if (this.isMounted()) {
+				this.setState({station:station});
+			}
 		}).bind(this));
 	},
 	render() {
 		return (
 			<div>
-			<StationSelector onSelect={this.selectorHandler}/>
+			<StationSelector onSelect={this.setStation}/>
 			<span>可借：{this.state.station.canborrow}, 空位：{this.state.station.empty}</span>
-			<div id="map" style={{width:500, height:320}}></div>
+			<div id="map" style={{position: 'absolute', top:0, left:0, width: $(global).width(), height: $(global).height()}}></div>
 			</div>
 		);
 	}

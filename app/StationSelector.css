@@ -1,4 +1,22 @@
+.container {
+	position: relative;
+	z-index: 1;
+}
+
+.input {
+	border: 1px solid #eee;
+	padding: 3px;
+	outline: none;
+}
+
+.input:focus {
+	border: 1px solid #4791ff;
+}
+
 .list {
+	position: absolute;
+	top: auto;
+	left: auto;
 	width: 200px;
 	background: #fff;
 	border: 1px solid #ccc;
@@ -27,5 +45,5 @@
     cursor: default;
 }
 .item:hover {
-	background: #EEE;
+	background: #eee;
 }
