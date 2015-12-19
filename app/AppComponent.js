@@ -31,11 +31,6 @@ module.exports = React.createClass({
 	},
 	componentDidUpdate: function(prevProps, prevState) {
 		this.resetMapSize();
-
-		// move map to the selected station
-		if (this.state.station !== prevState.station) {
-			this.state.map.centerAndZoom(new BMap.Point(this.state.station.lng, this.state.station.lat), 18);
-		}
 	},
 	setMyGeo: function(){
 		(new BMap.Geolocation()).getCurrentPosition((function(geo){
@@ -52,14 +47,15 @@ module.exports = React.createClass({
 				var label = new BMap.Label(v.station.name,{offset:new BMap.Size(20,-10)});
 				marker.setLabel(label);
 				marker.addEventListener("click", (function(){
-					this.setStation(v, label);
+					this.setStation(v, label, true);
 				}).bind(this));
 				this.state.map.addOverlay(marker);
 			});
 			this.isLoadMarkers = true;
 		}
 	},
-	setStation(v, label){
+	setStation(v, label, noMove){
+		!noMove && this.state.map.centerAndZoom(new BMap.Point(v.station.lng, v.station.lat), 18);
 		Api.url(v.station.fddmz).fetch((function(data){
 			var station = data.station;
 			if (this.isMounted()) {

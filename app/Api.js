@@ -107,17 +107,18 @@ Api = {
                 return this;
         },
         fetch: function(success){
-        	$.ajax({
-			   	url: 'https://jsonp.afeld.me/',
-			   	type: 'GET',
-			   	dataType: 'jsonp',
-			   	jsonp: 'callback',
-			   	data: { "url": this._url },
-			   	timeout: 5000,
-			   	success: function(data){
-			   		success && success instanceof Function && success(data);
+        	$.getJSON(
+			   	// 'https://jsonp.afeld.me/',
+			   	'http://query.yahooapis.com/v1/public/yql',
+			   	{ 
+			   		q: "select * from json where url='"+this._url+"'",
+			   		format: "json"
+			   	},
+			   	function(data){
+			   		console.log(data);
+			   		success && success instanceof Function && success(data.query.results);
 			   	}
-			});
+			);
 			return this;
         }
 };
