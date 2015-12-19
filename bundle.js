@@ -9386,17 +9386,15 @@
 																	this._url = 'http://lhcs.shencom.cn/scamp/index.php/bicycle/tool/ajax_return_station_info/' + station_code;
 																	return this;
 									},
-									fetch: function fetch(_success) {
-																	$.ajax({
-																									url: 'https://jsonp.afeld.me/',
-																									type: 'GET',
-																									dataType: 'jsonp',
-																									jsonp: 'callback',
-																									data: { "url": this._url },
-																									timeout: 5000,
-																									success: function success(data) {
-																																	_success && _success instanceof Function && _success(data);
-																									}
+									fetch: function fetch(success) {
+																	$.getJSON(
+																	// 'https://jsonp.afeld.me/',
+																	'http://query.yahooapis.com/v1/public/yql', {
+																									q: "select * from json where url='" + this._url + "'",
+																									format: "json"
+																	}, function (data) {
+																									console.log(data);
+																									success && success instanceof Function && success(data.query.results);
 																	});
 																	return this;
 									}
@@ -30019,11 +30017,6 @@
 		},
 		componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 			this.resetMapSize();
-
-			// move map to the selected station
-			if (this.state.station !== prevState.station) {
-				this.state.map.centerAndZoom(new BMap.Point(this.state.station.lng, this.state.station.lat), 18);
-			}
 		},
 		setMyGeo: function setMyGeo() {
 			new BMap.Geolocation().getCurrentPosition((function (geo) {
@@ -30042,14 +30035,15 @@
 					var label = new BMap.Label(v.station.name, { offset: new BMap.Size(20, -10) });
 					marker.setLabel(label);
 					marker.addEventListener("click", (function () {
-						this.setStation(v, label);
+						this.setStation(v, label, true);
 					}).bind(_this));
 					_this.state.map.addOverlay(marker);
 				});
 				this.isLoadMarkers = true;
 			}
 		},
-		setStation: function setStation(v, label) {
+		setStation: function setStation(v, label, noMove) {
+			!noMove && this.state.map.centerAndZoom(new BMap.Point(v.station.lng, v.station.lat), 18);
 			Api.url(v.station.fddmz).fetch((function (data) {
 				var station = data.station;
 				if (this.isMounted()) {
