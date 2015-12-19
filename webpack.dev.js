@@ -1,5 +1,6 @@
 var path = require("path");
 var webpack = require("webpack");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
 var config = {
 	entry: [ 
 		'webpack-dev-server/client?http://localhost:8080',
@@ -16,7 +17,7 @@ var config = {
     	 headers: { "X-Custom-Header": "yes" },
     },
 	output: {
-		path: './build',
+		path: './',
 		filename: 'bundle.js'
 	},
 	module: {
@@ -25,7 +26,12 @@ var config = {
 			{ test: /\.css$/, loader: 'style!css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]' },
 			{ test: /\.(eot|woff|ttf|svg|woff2)$/, loader: 'url' }
 		]
-	}
+	},
+    plugins: [
+        new HtmlWebpackPlugin({
+          template: './app/index.html'
+        })
+    ]
 }
 
 module.exports = config;
