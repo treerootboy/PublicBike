@@ -19,7 +19,6 @@ module.exports = React.createClass({
 		this.setState({input:e.target.value});
 	},
 	selectedHandler(data){
-		console.log(data);
 		this.setState({input: data.station.name})
 		this.props.onSelect(data);
 	},

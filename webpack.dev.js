@@ -7,15 +7,6 @@ var config = {
 		'webpack/hot/only-dev-server',
 		'./app/main.js'
 	],
-    devServer: {
-    	proxy: {
-    		'/scamp/*': {
-    			target: 'http://lhcs.shencom.cn/',
-                secure: false,
-            }
-    	},
-    	 headers: { "X-Custom-Header": "yes" },
-    },
 	output: {
 		path: './',
 		filename: 'bundle.js'

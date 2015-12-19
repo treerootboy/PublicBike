@@ -11,6 +11,10 @@ module.exports = React.createClass({
 			}
 		};
 	},
+	resetMapSize: function(){
+		this.refs.map.style.width = $(global).width()+'px';
+		this.refs.map.style.height = $(global).height()+'px';
+	},
 	componentDidMount: function() {
 		var map = new BMap.Map('map');
 		map.addEventListener("tilesloaded", (function(){
@@ -19,6 +23,9 @@ module.exports = React.createClass({
 		}).bind(this));
 		map.enableScrollWheelZoom(true);
 		map.setCurrentCity('深圳');
+
+		global.addEventListener('resize', this.resetMapSize);
+
 		this.setState({map: map});
 	},
 	componentDidUpdate: function(prevProps, prevState) {
@@ -26,6 +33,8 @@ module.exports = React.createClass({
 			this.state.map.centerAndZoom(geo.point, 15);
 			this.state.map.addOverlay(new BMap.Circle(geo.point, 20));
 		}).bind(this));
+
+		this.resetMapSize();
 
 		// move map to the selected station
 		if (this.state.station !== prevState.station) {
@@ -62,7 +71,7 @@ module.exports = React.createClass({
 			<div>
 			<StationSelector onSelect={this.setStation}/>
 			<span>可借：{this.state.station.canborrow}, 空位：{this.state.station.empty}</span>
-			<div id="map" style={{position: 'absolute', top:0, left:0, width: $(global).width(), height: $(global).height()}}></div>
+			<div id="map" ref="map" style={{position: 'absolute', top:0, left:0}}></div>
 			</div>
 		);
 	}
