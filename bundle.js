@@ -30027,7 +30027,6 @@
 		},
 		setMyGeo: function setMyGeo() {
 			new BMap.Geolocation().getCurrentPosition((function (geo) {
-				this.state.map.centerAndZoom(geo.point, 15);
 				this.state.map.addOverlay(new BMap.Circle(geo.point, 20));
 			}).bind(this));
 		},
