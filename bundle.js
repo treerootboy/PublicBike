@@ -30042,17 +30042,18 @@
 					var label = new BMap.Label(v.station.name, { offset: new BMap.Size(20, -10) });
 					marker.setLabel(label);
 					marker.addEventListener("click", (function () {
-						label.setContent(v.station.name + '(借:' + (v.station.canborrow || 0) + ',空:' + (v.station.empty || 0) + ')');
+						this.setStation(v, label);
 					}).bind(_this));
 					_this.state.map.addOverlay(marker);
 				});
 				this.isLoadMarkers = true;
 			}
 		},
-		setStation: function setStation(v) {
+		setStation: function setStation(v, label) {
 			Api.url(v.station.fddmz).fetch((function (data) {
 				var station = data.station;
 				if (this.isMounted()) {
+					label && label.setContent(station.name + '(借:' + (station.canborrow || 0) + ',空:' + (station.empty || 0) + ')');
 					this.setState({ station: station });
 				}
 			}).bind(this));
