@@ -5,7 +5,7 @@ var config = {
 	entry: './app/main.js',
 	output: {
 		path: './',
-		filename: 'bundle.js'
+		filename: '[hash].js'
 	},
 	module: {
 		loaders: [
@@ -18,7 +18,12 @@ var config = {
         new HtmlWebpackPlugin({
             inject: true,
             template: './app/index.html'
-        })
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+		    compress: {
+		        warnings: false
+		    }
+		})
     ]
 }
 
