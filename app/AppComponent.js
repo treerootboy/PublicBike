@@ -22,7 +22,6 @@ module.exports = React.createClass({
 			this.setMarkers();
 			this.setMyGeo();
 		}).bind(this));
-		map.enableScrollWheelZoom(true);
 		map.setCurrentCity('深圳');
 		map.centerAndZoom('罗湖', 15);
 
@@ -37,19 +36,30 @@ module.exports = React.createClass({
 			this.state.map.addOverlay(new BMap.Circle(geo.point, 20));
 		}).bind(this));
 	},
+	addMarkers: function(v, point){
+		var marker = new BMap.Marker(point);
+		var label = new BMap.Label(v.station.name,{offset:new BMap.Size(20,-10)});
+		marker.setLabel(label);
+		marker.addEventListener("click", (function(){
+			this.setStation(v, label, true);
+		}).bind(this));
+		this.state.map.addOverlay(marker);
+	},
 	setMarkers: function() {
 		if (!this.isLoadMarkers && this.state.map) {
 			this.state.map.clearOverlays();
 			var points = [];
 			Stations.map((v, i)=>{
-				var point = new BMap.Point(v.station.lng, v.station.lat);
-				var marker = new BMap.Marker(point);
-				var label = new BMap.Label(v.station.name,{offset:new BMap.Size(20,-10)});
-				marker.setLabel(label);
-				marker.addEventListener("click", (function(){
-					this.setStation(v, label, true);
-				}).bind(this));
-				this.state.map.addOverlay(marker);
+				if (v.station.lng=='null' || v.station.lat=='null') {
+					console.log(v.station.name.replace('站', ''));
+					(new BMap.Geocoder()).getPoint(v.station.name.replace('站', ''), (function(point){
+						this.addMarkers(v, point);
+					}).bind(this), '深圳罗湖');
+				} else {
+					var point = new BMap.Point(v.station.lng, v.station.lat);
+					this.addMarkers(v, point);
+				}
+				
 			});
 			this.isLoadMarkers = true;
 		}
