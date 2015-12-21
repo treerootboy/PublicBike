@@ -4,7 +4,7 @@ var HtmlWebpackPlugin = require("html-webpack-plugin");
 var config = {
 	entry: './app/main.js',
 	output: {
-		path: './',
+		path: './build',
 		filename: '[hash].js'
 	},
 	module: {
