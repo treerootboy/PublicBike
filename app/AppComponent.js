@@ -51,7 +51,6 @@ module.exports = React.createClass({
 			var points = [];
 			Stations.map((v, i)=>{
 				if (v.station.lng=='null' || v.station.lat=='null') {
-					console.log(v.station.name.replace('站', ''));
 					(new BMap.Geocoder()).getPoint(v.station.name.replace('站', ''), (function(point){
 						this.addMarkers(v, point);
 					}).bind(this), '深圳罗湖');
